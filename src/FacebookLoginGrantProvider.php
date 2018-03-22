@@ -30,8 +30,8 @@ class FacebookLoginGrantProvider extends PassportServiceProvider
             __DIR__.'/config/facebook.php' => config_path('facebook.php'),
         ]);
 
-        Passport::tokensExpireIn(now()->addDay(\config('auth.accessTokenExpireIn')));
-        Passport::refreshTokensExpireIn(now()->addDay(\config('auth.refreshTokenExpireIn')));
+        Passport::tokensExpireIn(now()->addDay(\config('facebook.accessTokenExpireIn')));
+        Passport::refreshTokensExpireIn(now()->addDay(\config('facebook.refreshTokenExpireIn')));
         Passport::pruneRevokedTokens();
         Passport::revokeOtherTokens();
 
