@@ -35,7 +35,7 @@ class FacebookLoginGrantProvider extends PassportServiceProvider
         Passport::pruneRevokedTokens();
         Passport::revokeOtherTokens();
 
-        if (file_exists(storage_path('oauth-private.key'))) {
+        if (file_exists(__DIR__ . '/../../../../storage/oauth-private.key')) {
             app(AuthorizationServer::class)->enableGrantType($this->makeRequestGrant(), Passport::tokensExpireIn());
         }
     }

@@ -4,7 +4,6 @@ namespace Danjdewhurst\PassportFacebookLogin;
 
 use Illuminate\Http\Request;
 use Laravel\Passport\Bridge\User;
-use Laravel\Passport\Passport;
 use League\OAuth2\Server\Entities\UserEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\AbstractGrant;
@@ -23,10 +22,11 @@ class FacebookLoginRequestGrant extends AbstractGrant
     public function __construct(
         UserRepositoryInterface $userRepository,
         RefreshTokenRepositoryInterface $refreshTokenRepository
-    ) {
+    )
+    {
         $this->setUserRepository($userRepository);
         $this->setRefreshTokenRepository($refreshTokenRepository);
-        $this->refreshTokenTTL = Passport::refreshTokensExpireIn();
+        $this->refreshTokenTTL = new \DateInterval('P1M');
     }
 
     /**
@@ -36,7 +36,8 @@ class FacebookLoginRequestGrant extends AbstractGrant
         ServerRequestInterface $request,
         ResponseTypeInterface $responseType,
         \DateInterval $accessTokenTTL
-    ) {
+    )
+    {
         // Validate request
         $client = $this->validateClient($request);
         $scopes = $this->validateScopes($this->getRequestParameter('scope', $request));
@@ -105,6 +106,6 @@ class FacebookLoginRequestGrant extends AbstractGrant
             throw OAuthServerException::serverError('Unable to find loginFacebook method on user model.');
         }
 
-        return ($user) ? new User($user->getKey()) : null;
+        return ($user) ? new User($user->id) : null;
     }
 }

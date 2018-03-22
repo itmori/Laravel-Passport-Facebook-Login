@@ -5,8 +5,7 @@ use Facebook\Facebook;
 use Illuminate\Http\Request;
 use League\OAuth2\Server\Exception\OAuthServerException;
 
-trait FacebookLoginTrait
-{
+trait FacebookLoginTrait {
     /**
      * Logs a App\User in using a Facebook token via Passport
      *
@@ -47,37 +46,21 @@ trait FacebookLoginTrait
                 /**
                  * Create a new user if they haven't already signed up.
                  */
-                $facebook_id_column = config('facebook.registration.facebook_id', 'facebook_id');
-                $name_column        = config('facebook.registration.name', 'name');
-                $first_name_column  = config('facebook.registration.first_name', 'first_name');
-                $last_name_column   = config('facebook.registration.last_name', 'last_name');
-                $email_column       = config('facebook.registration.email', 'email');
-                $password_column    = config('facebook.registration.password', 'password');
-
-                $user = $userModel::where($facebook_id_column, $fbUser['id'])->first();
+                $user = $userModel::where('facebook_id', $fbUser['id'])->first();
 
                 if (!$user) {
                     $user = new $userModel();
-                    $user->{$facebook_id_column} = $fbUser['id'];
-
-                    if ($first_name_column) {
-                        $user->{$first_name_column} = $fbUser['first_name'];
-                    }
-                    if ($last_name_column) {
-                        $user->{$last_name_column} = $fbUser['last_name'];
-                    }
-                    if ($name_column) {
-                        $user->{$name_column} = $fbUser['first_name'] . ' ' . $fbUser['last_name'];
-                    }
-
-                    $user->{$email_column}    = $fbUser['email'];
-                    $user->{$password_column} = bcrypt(uniqid('fb_', true)); // Random password.
+                    $user->facebook_id = $fbUser['id'];
+                    $user->first_name = $fbUser['first_name'];
+                    $user->last_name = $fbUser['last_name'];
+                    $user->email = $fbUser['email'];
+                    $user->password = uniqid('fb_', true); // Random password.
                     $user->save();
 
                     /**
                      * Attach a role to the user.
                      */
-                    if (!is_null(config('facebook.registration.attach_role'))) {
+                    if(!is_null(config('facebook.registration.attach_role'))) {
                         $user->attachRole(config('facebook.registration.attach_role'));
                     }
                 }
